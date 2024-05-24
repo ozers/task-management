@@ -1,11 +1,13 @@
 const express = require('express');
+const dotenv = require('dotenv');
 const connectDB = require("./src/config/database");
 
-const app = express();
-
+dotenv.config();
 connectDB();
 
+const app = express();
 app.use(express.json());
+app.use('/api/auth', require('./src/routes/authRoutes'));
 
 const PORT = process.env.PORT || 3000;
 
