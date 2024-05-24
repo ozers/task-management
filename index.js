@@ -7,7 +7,9 @@ connectDB();
 
 const app = express();
 app.use(express.json());
+
 app.use('/api/auth', require('./src/routes/authRoutes'));
+app.use('/api/tasks', require('./src/routes/taskRoutes'));
 
 const PORT = process.env.PORT || 3000;
 
