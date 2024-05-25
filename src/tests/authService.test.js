@@ -22,6 +22,12 @@ describe('AuthService', () => {
                 token: 'fakeToken',
             });
         });
+
+        it('should throw an error if user creation fails', async () => {
+            User.create.mockRejectedValue(new Error('Database error'));
+
+            await expect(authService.register('testuser', 'password123')).rejects.toThrow('Database error');
+        });
     });
 
     describe('login', () => {
@@ -42,9 +48,16 @@ describe('AuthService', () => {
         });
 
         it('should throw an error if credentials are incorrect', async () => {
-            User.findOne.mockResolvedValue(null);
+            const user = { _id: '123', username: 'testuser', matchPassword: jest.fn().mockResolvedValue(false) };
+            User.findOne.mockResolvedValue(user);
 
             await expect(authService.login('testuser', 'wrongpassword')).rejects.toThrow('Invalid credentials');
+        });
+
+        it('should throw an error if user is not found', async () => {
+            User.findOne.mockResolvedValue(null);
+
+            await expect(authService.login('unknownuser', 'password123')).rejects.toThrow('Invalid credentials');
         });
     });
 });

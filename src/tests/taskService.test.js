@@ -14,6 +14,21 @@ describe('TaskService', () => {
             expect(Task.find).toHaveBeenCalledWith({ user: '123' });
             expect(result).toEqual(tasks);
         });
+
+        it('should return an empty array if no tasks are found', async () => {
+            Task.find.mockResolvedValue([]);
+
+            const result = await taskService.getTasks('123');
+
+            expect(Task.find).toHaveBeenCalledWith({ user: '123' });
+            expect(result).toEqual([]);
+        });
+
+        it('should throw an error if there is a database issue', async () => {
+            Task.find.mockRejectedValue(new Error('Database error'));
+
+            await expect(taskService.getTasks('123')).rejects.toThrow('Database error');
+        });
     });
 
     describe('createTask', () => {
@@ -26,6 +41,12 @@ describe('TaskService', () => {
             expect(Task.create).toHaveBeenCalledWith({ user: '123', title: 'New Task', description: 'New Description' });
             expect(result).toEqual(taskData);
         });
+
+        it('should throw an error if task creation fails', async () => {
+            Task.create.mockRejectedValue(new Error('Database error'));
+
+            await expect(taskService.createTask('123', 'New Task', 'New Description')).rejects.toThrow('Database error');
+        });
     });
 
     describe('getTaskById', () => {
@@ -37,6 +58,12 @@ describe('TaskService', () => {
 
             expect(Task.findById).toHaveBeenCalledWith('1');
             expect(result).toEqual(task);
+        });
+
+        it('should throw an error if task is not found', async () => {
+            Task.findById.mockResolvedValue(null);
+
+            await expect(taskService.getTaskById('1', '123')).rejects.toThrow('Task not found');
         });
 
         it('should throw an error if user is not authorized', async () => {
@@ -57,7 +84,7 @@ describe('TaskService', () => {
 
             expect(Task.findById).toHaveBeenCalledWith('1');
             expect(task.save).toHaveBeenCalled();
-            expect(result).toEqual(true);
+            expect(result).toEqual(task);
         });
 
         it('should throw an error if user is not authorized', async () => {
@@ -65,6 +92,12 @@ describe('TaskService', () => {
             Task.findById.mockResolvedValue(task);
 
             await expect(taskService.updateTask('1', '123', { title: 'New Title' })).rejects.toThrow('Not authorized');
+        });
+
+        it('should throw an error if task is not found', async () => {
+            Task.findById.mockResolvedValue(null);
+
+            await expect(taskService.updateTask('1', '123', { title: 'New Title' })).rejects.toThrow('Task not found');
         });
     });
 
@@ -84,6 +117,12 @@ describe('TaskService', () => {
             Task.findById.mockResolvedValue(task);
 
             await expect(taskService.deleteTask('1', '123')).rejects.toThrow('Not authorized');
+        });
+
+        it('should throw an error if task is not found', async () => {
+            Task.findById.mockResolvedValue(null);
+
+            await expect(taskService.deleteTask('1', '123')).rejects.toThrow('Task not found');
         });
     });
 });

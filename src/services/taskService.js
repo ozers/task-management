@@ -12,6 +12,10 @@ const createTask = async (userId, title, description) => {
 const getTaskById = async(taskId, userId) => {
     const task = await Task.findById(taskId);
 
+    if(!task){
+        throw new Error('Task not found');
+    }
+
     if(task.user.toString() !== userId.toString()) {
         throw new Error('Not authorized');
     }
@@ -20,17 +24,30 @@ const getTaskById = async(taskId, userId) => {
 
 const updateTask = async (taskId, userId, updates) => {
     const task = await Task.findById(taskId);
+
+    if(!task){
+        throw new Error('Task not found');
+    }
+
     if (task.user.toString() !== userId.toString()) {
         throw new Error('Not authorized');
     }
     task.title = updates.title || task.title;
     task.description = updates.description || task.description;
     task.completed = updates.completed !== undefined ? updates.completed : task.completed;
-    return await task.save();
+
+    await task.save();
+
+    return task;
 };
 
 const deleteTask = async (taskId, userId) => {
     const task = await Task.findById(taskId);
+
+    if(!task){
+        throw new Error('Task not found');
+    }
+
     if (task.user.toString() !== userId.toString()) {
         throw new Error('Not authorized');
     }
