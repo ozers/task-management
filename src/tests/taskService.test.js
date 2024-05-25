@@ -109,7 +109,7 @@ describe('TaskService', () => {
             await taskService.deleteTask('1', '123');
 
             expect(Task.findById).toHaveBeenCalledWith('1');
-            expect(task.remove).toHaveBeenCalled();
+            expect(Task.deleteOne).toHaveBeenCalled();
         });
 
         it('should throw an error if user is not authorized', async () => {

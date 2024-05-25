@@ -44,14 +44,15 @@ const updateTask = async (taskId, userId, updates) => {
 const deleteTask = async (taskId, userId) => {
     const task = await Task.findById(taskId);
 
-    if(!task){
+    if (!task) {
         throw new Error('Task not found');
     }
 
     if (task.user.toString() !== userId.toString()) {
         throw new Error('Not authorized');
     }
-    await task.remove();
+
+    await Task.deleteOne({ _id: taskId });
 };
 
 module.exports = {
