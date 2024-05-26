@@ -15,8 +15,8 @@ This project is a RESTful API for a simple task management application. It inclu
 1. **Clone the repository:**
 
     ```sh
-    git clone https://github.com/yourusername/trt-backend-assignment.git
-    cd trt-backend-assignment
+    git clone https://github.com/yourusername/task-management.git
+    cd task-management
     ```
 
 2. **Install dependencies:**
